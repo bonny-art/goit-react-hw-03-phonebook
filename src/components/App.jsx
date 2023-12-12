@@ -5,6 +5,8 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { PhoneInputForm, ContactsList, Filter } from 'components';
 import { Section, Header, Title } from './Section/Section.styled';
 
+const LS_KEY = 'phone_contacts';
+
 export class App extends Component {
   state = {
     contacts: [],
@@ -31,6 +33,19 @@ export class App extends Component {
       contacts: [contact, ...prevState.contacts],
     }));
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem(LS_KEY, JSON.stringify(this.state.contacts));
+    }
+  }
+
+  componentDidMount() {
+    const contacts = JSON.parse(localStorage.getItem(LS_KEY));
+    if (contacts) {
+      this.setState({ contacts });
+    }
+  }
 
   deleteContact = contactId => {
     this.setState(prevState => ({
